@@ -1,6 +1,7 @@
 # Added by bgavran
 config.json
 .idea
+log/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
