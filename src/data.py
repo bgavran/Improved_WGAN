@@ -15,7 +15,8 @@ class Data:
         self.images_path = self.images_path[:500]
         self.images = np.zeros((len(self.images_path), self.img_size, self.img_size, 3))
         for i, img_path in enumerate(self.images_path):
-            print(i)
+            if i % 100 == 0:
+                print(i)
             self.images[i] = self.get_image(img_path)
 
     def next_batch_real(self, size):

@@ -11,8 +11,8 @@ class ProjectPath:
     def __init__(self, logdir):
         self.logdir = logdir
 
-        from time import gmtime, strftime
-        self.timestamp = strftime("%B_%d__%H:%M", gmtime())
+        from time import localtime, strftime
+        self.timestamp = strftime("%B_%d__%H:%M", localtime())
 
         self.path = os.path.join(ProjectPath.base, self.logdir, self.timestamp)
 

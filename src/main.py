@@ -6,7 +6,7 @@ from src.discriminators import *
 
 
 class Hp:
-    batch_size = 100
+    batch_size = 64
 
     steps = 100000
     path = datapath.path

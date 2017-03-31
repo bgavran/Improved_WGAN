@@ -6,12 +6,13 @@ class Discriminator:
         # TODO add batchnorm?
         with tf.variable_scope("Discriminator", reuse=reuse):
             act = tf.nn.relu
-            kernel = (3, 3)
+            kernel = (4, 4)
             image = tf.layers.conv2d(image, filters=64, kernel_size=kernel, strides=kernel, use_bias=False,
                                      activation=act)
             image = tf.layers.conv2d(image, filters=128, kernel_size=kernel, strides=kernel, use_bias=False,
                                      activation=act)
             image = tf.layers.conv2d(image, filters=256, kernel_size=kernel, strides=kernel, use_bias=False,
                                      activation=act)
+            kernel = (2, 2)
             image = tf.layers.conv2d(image, filters=1024, kernel_size=kernel, strides=kernel, use_bias=False)
             return image
