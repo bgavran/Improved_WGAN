@@ -19,13 +19,13 @@ class WGAN:
 
         self.real_image = self.x
         self.fake_image = self.generator(self.z)
-        self.summary_generated_image = tf.summary.image("Generated image", self.fake_image, max_outputs=4)
-        self.summary_real_image = tf.summary.image("Real image", self.real_image, max_outputs=4)
+        tf.summary.image("Generated image", self.fake_image, max_outputs=4)
+        tf.summary.image("Real image", self.real_image, max_outputs=4)
 
         self.c_real = self.discriminator(self.real_image)
         self.c_fake = self.discriminator(self.fake_image, reuse=True)
 
-        self.c_cost = tf.reduce_mean(self.c_real - self.c_fake)  # here we only update the critic?
+        self.c_cost = tf.reduce_mean(self.c_fake - self.c_real)  # here we only update the critic?
         self.g_cost = -tf.reduce_mean(self.c_fake)  # here we only update the generator
         tf.summary.scalar("Critic cost", self.c_cost)
         tf.summary.scalar("Generator cost", self.g_cost)
@@ -42,6 +42,17 @@ class WGAN:
         for i, var in enumerate(c_variables):
             tf.summary.histogram("Discriminator " + str(i), var)
 
+        grads = self.optimizer(learning_rate=self.lr).compute_gradients(self.c_cost, var_list=c_variables)
+
+        from tensorflow.python.framework import ops
+        for gradient, variable in grads:
+            if isinstance(gradient, ops.IndexedSlices):
+                grad_values = gradient.values
+            else:
+                grad_values = gradient
+            tf.summary.histogram(variable.name, variable)
+            tf.summary.histogram(variable.name + "/gradients", grad_values)
+
     def run_session(self, data, hp):
         merged = tf.summary.merge_all()
         with tf.Session() as sess:
@@ -49,6 +60,8 @@ class WGAN:
             tf.global_variables_initializer().run()
 
             g_times = 1
+            from time import time
+            start_time = time()
             for step in range(hp.steps):
                 print("Step", step, end="  ")
                 if step < 25 or step % 500 == 0:
@@ -60,16 +73,17 @@ class WGAN:
                     print("c" + str(_) + " ", end="")
                     data_batch = data.next_batch_real(hp.batch_size)
                     z = data.next_batch_fake(hp.batch_size, self.z_size)
-                    sess.run(self.c_optimizer, feed_dict={self.x: data_batch, self.z: z})
-                    sess.run(self.c_clipper)
+                    sess.run([self.c_optimizer, self.c_clipper], feed_dict={self.x: data_batch, self.z: z})
 
                 for _ in range(g_times):
                     print("g" + str(_) + " ")
                     z = data.next_batch_fake(hp.batch_size, self.z_size)
                     sess.run(self.g_optimizer, feed_dict={self.z: z})
 
-                print("Generating summary...")
-                x = data.next_batch_real(hp.batch_size)
-                z = data.next_batch_fake(hp.batch_size, self.z_size)
-                summary = sess.run(merged, feed_dict={self.x: x, self.z: z})
-                writer.add_summary(summary, step)
+                if step % 10 == 0:
+                    x = data.next_batch_real(hp.batch_size)
+                    z = data.next_batch_fake(hp.batch_size, self.z_size)
+                    summary = sess.run(merged, feed_dict={self.x: x, self.z: z})
+                    writer.add_summary(summary, step)
+                    print("Summary generated. Time == ", time() - start_time)
+                    start_time = time()
