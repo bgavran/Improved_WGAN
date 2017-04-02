@@ -12,7 +12,7 @@ class Data:
             for fname in fnames:
                 self.images_path.append(os.path.join(dirpath, fname))
 
-        self.images_path = self.images_path[:500]
+        self.images_path = self.images_path[:500]  # training only on 500 images for now, for speed and memory reasons
         self.images = np.zeros((len(self.images_path), self.img_size, self.img_size, 3))
         for i, img_path in enumerate(self.images_path):
             if i % 100 == 0:
@@ -21,10 +21,7 @@ class Data:
 
     def next_batch_real(self, size):
         locations = np.random.randint(0, len(self.images_path), size)
-        images = np.zeros((size, self.img_size, self.img_size, 3))
-        for i, loc in enumerate(locations):
-            images[i] = self.get_image(self.images_path[loc])
-        return images
+        return np.array([self.images[loc] for loc in locations])
 
     def next_batch_fake(self, batch_size, z_size):
         return np.random.rand(batch_size, z_size)

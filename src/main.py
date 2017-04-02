@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from src.data import *
-from src.wgan import *
-from src.generators import *
-from src.discriminators import *
+from data import *
+from wgan import *
+from generators import *
+from discriminators import *
 
 
 class Hp:
