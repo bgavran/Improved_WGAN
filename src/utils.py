@@ -15,5 +15,3 @@ class ProjectPath:
         self.timestamp = strftime("%B_%d__%H:%M", localtime())
 
         self.path = os.path.join(ProjectPath.base, self.logdir, self.timestamp)
-
-
