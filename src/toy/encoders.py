@@ -20,7 +20,7 @@ class ConvEncoder:
             image = act(bnorm(image))
             image = tf.layers.conv2d(image, filters=256, **kwargs)
             image = act(bnorm(image))
-            image = tf.layers.conv2d(image, filters=1024, **kwargs)
+            image = tf.layers.conv2d(image, filters=self.z_size, **kwargs)
 
             return image
 

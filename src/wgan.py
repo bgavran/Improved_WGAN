@@ -3,21 +3,20 @@ import numpy as np
 
 
 class WGAN:
-    def __init__(self, generator, critic, z_size, img_size, optimizer=tf.train.RMSPropOptimizer, clip_value=0.01,
-                 learning_rate=0.00005):
+    def __init__(self, generator, critic, z_size, img_size, optimizer=tf.train.RMSPropOptimizer(learning_rate=0.0005),
+                 clip_value=0.01):
         self.generator = generator
         self.critic = critic
 
-        self.z_size = z_size
-        self.img_size = img_size
-        self.real_image = tf.placeholder(tf.float32, [None, self.img_size, self.img_size, 3])
-        self.z = tf.placeholder(tf.float32, [None, self.z_size])
-
         self.clip_value = clip_value
         self.optimizer = optimizer
-        self.lr = learning_rate
 
+        self.z_size = z_size
+        self.img_size = img_size
+
+        self.z = tf.placeholder(tf.float32, [None, self.z_size])
         self.fake_image = self.generator(self.z)
+        self.real_image = tf.placeholder(tf.float32, [None, self.img_size, self.img_size, 3])
 
         self.c_real = self.critic(self.real_image)
         self.c_fake = self.critic(self.fake_image, reuse=True)
@@ -27,12 +26,22 @@ class WGAN:
         # tries to maximize the score for fake images
         self.g_cost = -tf.reduce_mean(self.c_fake)
 
+        # regulariazion of critic, satisfying the Lipschitz constraint
+        self.eta = tf.placeholder(tf.float32, shape=[1])
+        interp = self.eta * self.real_image + (1 - self.eta) * self.fake_image
+        c_interp = self.critic(interp, reuse=True)
+        c_grads = tf.gradients(c_interp, interp)[0]  # taking the zeroth and only element because it returns a list
+        slopes = tf.sqrt(tf.reduce_sum(tf.square(c_grads), axis=1))
+        grad_penalty = tf.reduce_mean(tf.square(slopes - 1.) ** 2)
+        lambd = 10
+        self.c_cost += lambd * grad_penalty
+
         c_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "Critic")  # weights for the critic
-        self.c_optimizer = self.optimizer(self.lr).minimize(self.c_cost, var_list=c_variables)
-        self.c_clipper = [var.assign(tf.clip_by_value(var, -self.clip_value, self.clip_value)) for var in c_variables]
+        self.c_optimizer = self.optimizer.minimize(self.c_cost, var_list=c_variables)
+        # self.c_clipper = [var.assign(tf.clip_by_value(var, -self.clip_value, self.clip_value)) for var in c_variables]
 
         g_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "Generator")  # weights for the generator
-        self.g_optimizer = self.optimizer(learning_rate=self.lr).minimize(self.g_cost, var_list=g_variables)
+        self.g_optimizer = self.optimizer.minimize(self.g_cost, var_list=g_variables)
 
         # Adding summaries for tensorflow until the end of the method
         tf.summary.image("Generated image", self.fake_image, max_outputs=4)
@@ -64,20 +73,21 @@ class WGAN:
                     c_times = 25
                 else:
                     c_times = 5
+                eta = np.random.rand(1)
 
                 for _ in range(c_times):
                     data_batch = data.next_batch_real(hp.batch_size)
                     z = data.next_batch_fake(hp.batch_size, self.z_size)
-                    sess.run([self.c_optimizer, self.c_clipper], feed_dict={self.real_image: data_batch, self.z: z})
+                    sess.run([self.c_optimizer], feed_dict={self.real_image: data_batch, self.z: z, self.eta: eta})
 
                 z = data.next_batch_fake(hp.batch_size, self.z_size)
                 sess.run(self.g_optimizer, feed_dict={self.z: z})
 
-                if step % 20 == 0:
+                if step % 50 == 0:
                     n_images = 4
                     data_batch = data.next_batch_real(n_images)
                     z = data.next_batch_fake(n_images, self.z_size)
-                    summary = sess.run(merged, feed_dict={self.real_image: data_batch, self.z: z})
+                    summary = sess.run(merged, feed_dict={self.real_image: data_batch, self.z: z, self.eta: eta})
                     writer.add_summary(summary, step)
                     print("Summary generated. Step", step, " Time == %.2fs" % (time() - start_time))
                     start_time = time()

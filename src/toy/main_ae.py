@@ -8,7 +8,7 @@ from toy.decoders import *
 class Hp:
     batch_size = 64
     img_size = 128
-    z_size = 256
+    z_size = 1024
 
     steps = 100000
     path = datapath.path

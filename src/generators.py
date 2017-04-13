@@ -49,15 +49,15 @@ class ConvGenerator:
             z = tf.reshape(z, [-1, 4, 4, 256])
 
             z = tf.pad(z, pad2, mode="SYMMETRIC")
-            z = tf.layers.conv2d(z, filters=128, kernel_size=(5, 5), **kwargs, activation=act)
+            z = tf.layers.conv2d(z, filters=512, kernel_size=(5, 5), **kwargs, activation=act)
             z = tf.image.resize_images(z, (16, 16), method=res_met)
             #
             z = tf.pad(z, pad2, mode="SYMMETRIC")
-            z = tf.layers.conv2d(z, filters=64, kernel_size=(5, 5), **kwargs, activation=act)
+            z = tf.layers.conv2d(z, filters=128, kernel_size=(5, 5), **kwargs, activation=act)
             z = tf.image.resize_images(z, (32, 32), method=res_met)
 
             z = tf.pad(z, pad2, mode="SYMMETRIC")
-            z = tf.layers.conv2d(z, filters=32, kernel_size=(5, 5), **kwargs, activation=act)
+            z = tf.layers.conv2d(z, filters=64, kernel_size=(5, 5), **kwargs, activation=act)
             z = tf.image.resize_images(z, (self.img_size, self.img_size), method=res_met)
 
             z = tf.pad(z, pad2, mode="SYMMETRIC")
