@@ -27,12 +27,12 @@ class WGAN:
         self.g_cost = -tf.reduce_mean(self.c_fake)
 
         # regulariazion of critic, satisfying the Lipschitz constraint
-        self.eta = tf.placeholder(tf.float32, shape=[1])
+        self.eta = tf.placeholder(tf.float32, shape=[None, 1, 1, 1])
         interp = self.eta * self.real_image + (1 - self.eta) * self.fake_image
         c_interp = self.critic(interp, reuse=True)
         c_grads = tf.gradients(c_interp, interp)[0]  # taking the zeroth and only element because it returns a list
-        slopes = tf.sqrt(tf.reduce_sum(tf.square(c_grads), axis=1))
-        grad_penalty = tf.reduce_mean(tf.square(slopes - 1.) ** 2)
+        slopes = tf.sqrt(tf.reduce_sum(tf.square(c_grads), axis=[1, 2, 3]))  # L2 norm, reshaping to [batch_size]
+        grad_penalty = tf.reduce_mean(tf.square(slopes - 1) ** 2)
         lambd = 10
         self.c_cost += lambd * grad_penalty
 
@@ -69,11 +69,12 @@ class WGAN:
             from time import time
             start_time = time()
             for step in range(hp.steps):
-                if step < 25 or step % 500 == 0:
-                    c_times = 25
+                print("Step", step)
+                if step < 25:
+                    c_times = 100
                 else:
-                    c_times = 5
-                eta = np.random.rand(1)
+                    c_times = 10
+                eta = np.random.rand(hp.batch_size, 1, 1, 1)  # sampling from uniform distribution
 
                 for _ in range(c_times):
                     data_batch = data.next_batch_real(hp.batch_size)
@@ -83,10 +84,11 @@ class WGAN:
                 z = data.next_batch_fake(hp.batch_size, self.z_size)
                 sess.run(self.g_optimizer, feed_dict={self.z: z})
 
-                if step % 50 == 0:
+                if step % 25 == 0:
                     n_images = 4
                     data_batch = data.next_batch_real(n_images)
                     z = data.next_batch_fake(n_images, self.z_size)
+                    eta = np.random.rand(4, 1, 1, 1)
                     summary = sess.run(merged, feed_dict={self.real_image: data_batch, self.z: z, self.eta: eta})
                     writer.add_summary(summary, step)
                     print("Summary generated. Step", step, " Time == %.2fs" % (time() - start_time))

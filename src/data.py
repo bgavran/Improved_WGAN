@@ -13,7 +13,7 @@ class Data:
         for (dirpath, dirnames, fnames) in os.walk(images_folder_path):
             for fname in fnames:
                 self.images_path.append(os.path.join(dirpath, fname))
-        self.images_path = self.images_path[:2000]  # training only on 500 images for now, for speed and memory reasons
+        self.images_path = self.images_path[:]  # training only on 500 images for now, for speed and memory reasons
         self.images = np.zeros((len(self.images_path), self.img_size, self.img_size, 3))
         for i, img_path in enumerate(self.images_path):
             if i % 1000 == 0:

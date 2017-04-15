@@ -9,7 +9,7 @@ class Hp:
     batch_size = 64
     crop_size = 128
     img_size = 64
-    z_size = 256
+    z_size = 100
     lr = 0.0001
 
     steps = 100000
@@ -18,7 +18,7 @@ class Hp:
 
 data = Data(Hp.img_size, Hp.crop_size)
 
-generator = ToyFCGenerator(Hp.img_size)
+generator = ConvGenerator(Hp.img_size)
 critic = ConvCritic(Hp.img_size)
 
 optimizer = tf.train.AdamOptimizer(learning_rate=Hp.lr, beta1=0.5, beta2=0.9)
