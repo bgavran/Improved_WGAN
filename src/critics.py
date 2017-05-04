@@ -62,12 +62,12 @@ class DCGANCritic:
         with tf.variable_scope("Critic", reuse=reuse):
             act = tf.nn.relu
 
-            kwargs = {"kernel_size": (5, 5), "strides": (2, 2), "padding": "same"}
+            kwargs = {"kernel_size": (5, 5), "strides": (2, 2), "padding": "same", "activation": act}
 
-            z = tf.layers.conv2d(z, filters=64, activation=act, **kwargs)
-            z = tf.layers.conv2d(z, filters=128, activation=act, **kwargs)
-            z = tf.layers.conv2d(z, filters=256, activation=act, **kwargs)
-            z = tf.layers.conv2d(z, filters=512, activation=act, **kwargs)
-            z = tf.reshape(z, [-1, 4 * 4 * 512])
+            z = tf.layers.conv2d(z, filters=64, **kwargs)
+            z = tf.layers.conv2d(z, filters=128, **kwargs)
+            z = tf.layers.conv2d(z, filters=256, **kwargs)
+            z = tf.layers.conv2d(z, filters=1024, **kwargs)
+            z = tf.reshape(z, [-1, 4 * 4 * 1024])
             z = tf.layers.dense(z, 1)
             return z

@@ -43,19 +43,19 @@ class ConvGenerator:
 
             kwargs = {"strides": (1, 1), "padding": "valid"}
 
-            z = tf.layers.dense(z, 16384, activation=act)
-            z = tf.reshape(z, [-1, 4, 4, 1024])
+            z = tf.layers.dense(z, 32768, activation=act)
+            z = tf.reshape(z, [-1, 4, 4, 2048])
 
             z = tf.pad(z, pad2, mode="SYMMETRIC")
-            z = tf.layers.conv2d(z, filters=512, kernel_size=(5, 5), **kwargs, activation=act)
+            z = tf.layers.conv2d(z, filters=1024, kernel_size=(5, 5), **kwargs, activation=act)
             z = tf.image.resize_images(z, (16, 16), method=res_met)
             #
             z = tf.pad(z, pad2, mode="SYMMETRIC")
-            z = tf.layers.conv2d(z, filters=256, kernel_size=(5, 5), **kwargs, activation=act)
+            z = tf.layers.conv2d(z, filters=512, kernel_size=(5, 5), **kwargs, activation=act)
             z = tf.image.resize_images(z, (32, 32), method=res_met)
 
             z = tf.pad(z, pad2, mode="SYMMETRIC")
-            z = tf.layers.conv2d(z, filters=128, kernel_size=(5, 5), **kwargs, activation=act)
+            z = tf.layers.conv2d(z, filters=256, kernel_size=(5, 5), **kwargs, activation=act)
             z = tf.image.resize_images(z, (self.img_size, self.img_size), method=res_met)
 
             z = tf.pad(z, pad2, mode="SYMMETRIC")
@@ -71,8 +71,8 @@ class DCGANGenerator:
         with tf.variable_scope("Generator"):
             act = tf.nn.relu
 
-            z = tf.layers.dense(z, 16384, activation=act)
-            z = tf.reshape(z, [-1, 4, 4, 1024])
+            z = tf.layers.dense(z, 32768, activation=act)
+            z = tf.reshape(z, [-1, 4, 4, 2048])
 
             kwargs = {"kernel_size": (5, 5), "strides": (2, 2), "padding": "same"}
 
