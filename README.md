@@ -28,12 +28,12 @@ Improved WGAN, compared to GAN:
 * Uses a different distance measure to compare distributions (Wasserstein instead of KL-divergence)
 * Enforces the Lipschitz constraint on the critic using gradient penalty
 
-The images on the top are some of the best results with DCGAN and custom upsampling architectures. The dataset used was the [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/), the deep-funneled version.
+The images on the top are some of the best results with DCGAN and custom upsampling architecture. The dataset used was the [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/), the deep-funneled version.
 
 Sample critic and generator training provided below:
 ![](assets/critic.png)
 ![](assets/generator.png)
 
 
-This project as created as a part of the FER course Analysis of massive data sets.
+This project was created as a part of the FER course Analysis of massive data sets.
 
