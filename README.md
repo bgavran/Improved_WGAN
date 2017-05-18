@@ -20,7 +20,7 @@ In this project, the paper [Improved training of Wasserstein GANs](https://arxiv
 
 The paper is the improvement of the [Wasserstein GAN](https://arxiv.org/abs/1701.07875) paper, which again is the improvement over the original [Generative Adversarial Network](https://arxiv.org/abs/1406.2661) paper.
 
-Each of those extension papers represents an incremental improvement to the original GAN training.
+Each of those extension papers represents a step to a more stable training regime.
 
 
 Improved WGAN, compared to GAN:
@@ -28,7 +28,8 @@ Improved WGAN, compared to GAN:
 * Uses a different distance measure to compare distributions (Wasserstein instead of KL-divergence)
 * Enforces the Lipschitz constraint on the critic using gradient penalty
 
-The images on the top are some of the best results with DCGAN and custom upsampling architecture. The dataset used was the [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/), the deep-funneled version.
+The images on the top are some of the best results with DCGAN and custom upsampling architecture. 
+The dataset used was [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/), the deep-funneled version.
 
 Sample critic and generator training provided below:
 ![](assets/critic.png)
