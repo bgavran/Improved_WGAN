@@ -1,4 +1,4 @@
-# AMDS\_FER
+# Improved training of Wasserstein GANs	
 
 ![](assets/1.png)
 ![](assets/2.png)
@@ -13,8 +13,6 @@
 ![](assets/11.png)
 
 ---
-
-### Improved training of Wasserstein GANs	
 
 In this project, the paper [Improved training of Wasserstein GANs](https://arxiv.org/abs/1704.00028) was implemented in Tensorflow and Python 3.6.
 
