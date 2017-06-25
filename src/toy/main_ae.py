@@ -14,7 +14,7 @@ class Hp:
     path = datapath.path
 
 
-data = Data(Hp.img_size)
+data = FacesData(Hp.img_size)
 
 encoder = ConvEncoder(Hp.img_size, Hp.z_size)
 decoder = ConvDecoder(Hp.img_size)

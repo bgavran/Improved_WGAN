@@ -1,39 +1,28 @@
 import tensorflow as tf
 
 
-class ToyFCGenerator:
-    def __init__(self, img_size):
-        self.img_size = img_size
-
-    def __call__(self, z):
-        with tf.variable_scope("Generator"):
-            z = tf.layers.dense(z, self.img_size * self.img_size * 3, tf.nn.sigmoid)
-            z = tf.reshape(z, [-1, self.img_size, self.img_size, 3])
-            return z
-
-
 class FCGenerator:
-    def __init__(self, img_size):
+    def __init__(self, img_size, channels):
         self.img_size = img_size
+        self.channels = channels
 
     def __call__(self, z):
         """
         :param z: tensor for latent space in shape of [batch_size, z_size]
         :return: 
         """
-        # TODO add batchnorm?
         with tf.variable_scope("Generator"):
             z = tf.layers.dense(z, 512, activation=tf.nn.relu)
             z = tf.layers.dense(z, 512, activation=tf.nn.relu)
-            z = tf.layers.dense(z, 512, activation=tf.nn.relu)
-            z = tf.layers.dense(z, self.img_size * self.img_size * 3, activation=tf.nn.sigmoid)
-            image = tf.reshape(z, [-1, self.img_size, self.img_size, 3])
+            z = tf.layers.dense(z, self.img_size * self.img_size * self.channels, activation=tf.nn.sigmoid)
+            image = tf.reshape(z, [-1, self.img_size, self.img_size, self.channels])
             return image
 
 
 class ConvGenerator:
-    def __init__(self, img_size):
+    def __init__(self, img_size, channels):
         self.img_size = img_size
+        self.channels = channels
 
     def __call__(self, z):
         with tf.variable_scope("Generator"):
@@ -64,10 +53,15 @@ class ConvGenerator:
 
 
 class DCGANGenerator:
-    def __init__(self, img_size):
-        self.img_size = img_size
+    def __init__(self, img_size, channels):
+        self.channels = channels
 
     def __call__(self, z):
+        """
+
+        :param z:
+        :return: returns tensor of shape [batch_size, 64, 64, channels]
+        """
         with tf.variable_scope("Generator"):
             act = tf.nn.relu
 
@@ -79,5 +73,5 @@ class DCGANGenerator:
             z = tf.layers.conv2d_transpose(z, filters=512, activation=act, **kwargs)
             z = tf.layers.conv2d_transpose(z, filters=256, activation=act, **kwargs)
             z = tf.layers.conv2d_transpose(z, filters=128, activation=act, **kwargs)
-            z = tf.layers.conv2d_transpose(z, filters=3, activation=tf.nn.sigmoid, **kwargs)
+            z = tf.layers.conv2d_transpose(z, filters=self.channels, activation=tf.nn.sigmoid, **kwargs)
             return z

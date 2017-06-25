@@ -11,12 +11,14 @@
 ![](assets/9.png)
 ![](assets/10.png)
 ![](assets/11.png)
+![](assets/12.png)
+![](assets/13.png)
 
 ---
 
-In this project, the paper [Improved training of Wasserstein GANs](https://arxiv.org/abs/1704.00028) was implemented in Tensorflow and Python 3.6.
+In this project, the paper [Improved training of Wasserstein GANs](https://arxiv.org/abs/1704.00028) was implemented in Tensorflow 1.2.0 and Python 3.6.
 
-The paper is the improvement of the [Wasserstein GAN](https://arxiv.org/abs/1701.07875) paper, which again is the improvement over the original [Generative Adversarial Network](https://arxiv.org/abs/1406.2661) paper.
+The paper is the improvement of the [Wasserstein GAN](https://arxiv.org/abs/1701.07875) paper, which again is the improvement over the original [Generative Adversarial Networks](https://arxiv.org/abs/1406.2661) paper.
 
 Each of those extension papers represents a step to a more stable training regime.
 
