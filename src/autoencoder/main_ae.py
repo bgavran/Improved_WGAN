@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from data import *
-from toy.autoencoder import *
-from toy.encoders import *
-from toy.decoders import *
+from dataset import *
+from autoencoder.autoencoder import *
+from autoencoder.encoders import *
+from autoencoder.decoders import *
 
 
 class Hp:
@@ -11,7 +11,7 @@ class Hp:
     z_size = 1024
 
     steps = 100000
-    path = datapath.path
+    path = project_path.path
 
 
 data = FacesData(Hp.img_size)

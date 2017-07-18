@@ -1,12 +1,14 @@
-from utils import *
+import scipy
+import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
+from utils import *
 
-datapath = ProjectPath("log")
+project_path = ProjectPath("log")
 
 
-class Data:
+class DataSet:
     """
-    Abstract class that WGAN uses
+    Abstract class that WGAN uses, needs to have a method which returns samples from the data
     """
 
     def next_batch_real(self, batch_size):
@@ -21,7 +23,7 @@ class Data:
         return np.random.rand(batch_size, z_size)
 
 
-class MNISTData(Data):
+class MNISTData(DataSet):
     def __init__(self):
         self.mnist = input_data.read_data_sets("MNIST_data/", reshape=False, one_hot=True)
         self.img_size = 28
@@ -32,26 +34,35 @@ class MNISTData(Data):
         return images
 
 
-class FacesData(Data):
+class FacesData(DataSet):
     def __init__(self, img_size, crop_size=128):
+        """
+        Faces dataset from the Labeled Faces in the Wild dataset, the deepfunelled version.
+        Images are first cropped, then resized to the desired size.
+
+        :param img_size: size to which resize the images to
+        :param crop_size:
+        """
+        assert img_size <= crop_size <= 250
         self.img_size = img_size
         self.channels = 3
         self.crop_size = crop_size
-        images_folder_path = os.path.join(datapath.base, "data", "lfw-deepfunneled")
+        images_folder_path = os.path.join(project_path.base, "data", "lfw-deepfunneled")
         self.images_path = []
         for (dirpath, dirnames, fnames) in os.walk(images_folder_path):
             for fname in fnames:
                 self.images_path.append(os.path.join(dirpath, fname))
-        # training only on 500 images for now, for speed and memory reasons
-        self.images_path = self.images_path[:]
+        # training only on 2000 images for now, for speed and memory reasons
+        self.images_path = self.images_path[:2000]
         self.num_examples = len(self.images_path)
         self.images = np.zeros((len(self.images_path), self.img_size, self.img_size, 3))
 
+        print("Loading dataset...")
         for i, img_path in enumerate(self.images_path):
             if i % 1000 == 0:
-                print(i)
+                print(i, "/", len(self.images_path))
             self.images[i] = self.get_image(img_path, resize_dim=self.img_size)
-
+        print("Done")
 
     def next_batch_real(self, size):
         locations = np.random.randint(0, self.num_examples, size)

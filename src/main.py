@@ -1,28 +1,19 @@
-from data import *
+from dataset import *
 from wgan import *
 from generators import *
 from critics import *
 
+dataset = FacesData(img_size=64)
+# dataset = MNISTData()
 
-class Hp:
-    batch_size = 32
+generator = ConvGenerator(img_size=dataset.img_size,
+                          channels=dataset.channels)
+critic = ConvCritic(img_size=dataset.img_size,
+                    channels=dataset.channels)
 
-    z_size = 100
+wgan = WGAN(generator=generator,
+            critic=critic,
+            dataset=dataset,
+            z_size=100)
 
-    lr = 0.0001
-    beta1 = 0.5
-    beta2 = 0.9
-
-    steps = 100000
-    path = datapath.path
-
-
-task = FacesData(img_size=64, crop_size=128)
-# data = MNISTData()
-
-generator = ConvGenerator(task.img_size, task.channels)
-critic = DCGANCritic(task.img_size, task.channels)
-
-optimizer = tf.train.AdamOptimizer(learning_rate=Hp.lr, beta1=Hp.beta1, beta2=Hp.beta2)
-wgan = WGAN(generator, critic, Hp.z_size, task.channels, optimizer=optimizer)
-wgan.run_session(task, Hp)
+wgan(batch_size=8, steps=100000, model_path=project_path.model_path)

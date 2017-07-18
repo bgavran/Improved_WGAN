@@ -3,13 +3,22 @@ import tensorflow as tf
 
 class FCGenerator:
     def __init__(self, img_size, channels):
+        """
+        Network which takes a batch of random vectors and creates images out of them with.
+
+        :param img_size: width and height of the image
+        :param channels: number of channels
+        """
         self.img_size = img_size
         self.channels = channels
 
     def __call__(self, z):
         """
-        :param z: tensor for latent space in shape of [batch_size, z_size]
-        :return: 
+        Method which performs the computation.
+
+        :param z: tensor of the shape [batch_size, z_size] representing batch_size random vectors from the
+        prior distribution
+        :return: image of the shape [batch_size, img_size, img_size, channels]
         """
         with tf.variable_scope("Generator"):
             z = tf.layers.dense(z, 512, activation=tf.nn.relu)

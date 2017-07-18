@@ -1,11 +1,8 @@
 import os
-import scipy.misc
-import numpy as np
+from time import time
 
 
 class ProjectPath:
-    # base = json.loads(open("config.json").read()).get("path", "")
-    # base = json.loads(open("config.json").read())["path"]
     base = os.path.dirname(os.path.dirname(__file__))
 
     def __init__(self, logdir):
@@ -14,4 +11,14 @@ class ProjectPath:
         from time import localtime, strftime
         self.timestamp = strftime("%B_%d__%H:%M", localtime())
 
-        self.path = os.path.join(ProjectPath.base, self.logdir, self.timestamp)
+        self.model_path = os.path.join(ProjectPath.base, self.logdir, self.timestamp)
+
+
+class Timer:
+    def __init__(self):
+        self.curr_time = time()
+
+    def time(self):
+        diff = time() - self.curr_time
+        self.curr_time = time()
+        return diff
