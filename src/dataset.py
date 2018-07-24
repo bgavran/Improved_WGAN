@@ -25,7 +25,7 @@ class DataSet:
 
 class MNISTData(DataSet):
     def __init__(self):
-        self.mnist = input_data.read_data_sets("MNIST_data/", reshape=False, one_hot=True)
+        self.mnist = input_data.read_data_sets("MNIST_data", reshape=False, one_hot=True)
         self.img_size = 28
         self.channels = 1
 

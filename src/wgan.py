@@ -1,3 +1,4 @@
+import os
 import sys
 import tensorflow as tf
 import numpy as np
@@ -84,7 +85,7 @@ class WGAN:
             else:
                 grad_values = gradient
             tf.summary.histogram(variable.name, variable)
-            tf.summary.histogram(variable.name + "/gradients", grad_values)
+            tf.summary.histogram(os.path.join(variable.name, "gradients"), grad_values)
 
         self.merged = tf.summary.merge_all()
 

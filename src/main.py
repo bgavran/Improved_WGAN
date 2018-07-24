@@ -6,10 +6,10 @@ from critics import *
 dataset = FacesData(img_size=64)
 # dataset = MNISTData()
 
-generator = ConvGenerator(img_size=dataset.img_size,
-                          channels=dataset.channels)
-critic = ConvCritic(img_size=dataset.img_size,
-                    channels=dataset.channels)
+generator = FCGenerator(img_size=dataset.img_size,
+                        channels=dataset.channels)
+critic = FCCritic(img_size=dataset.img_size,
+                  channels=dataset.channels)
 
 wgan = WGAN(generator=generator,
             critic=critic,

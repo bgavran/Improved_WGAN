@@ -9,7 +9,7 @@ class ProjectPath:
         self.logdir = logdir
 
         from time import localtime, strftime
-        self.timestamp = strftime("%B_%d__%H:%M", localtime())
+        self.timestamp = strftime("%B_%d__%H_%M", localtime())
 
         self.model_path = os.path.join(ProjectPath.base, self.logdir, self.timestamp)
 
